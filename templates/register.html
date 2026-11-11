@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Register Page (matches futuristic theme) -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register • Trending Analytics</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/app-icon.svg') }}" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body class="vibrant-ui">
+    <!-- Loading Screen -->
+    <div id="pageLoader" class="loader" aria-label="Loading">
+      <div class="loader__inner">
+        <div class="loader__ring"></div>
+        <div class="loader__text">
+          <span class="loader__brand">YT</span>
+          <span class="loader__label">Creating Secure Account</span>
+        </div>
+        <div class="loader__bar">
+          <span class="loader__barFill"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Background FX -->
+    <div class="bg" aria-hidden="true">
+      <div class="bg__grid"></div>
+      <div class="bg__glow bg__glow--red"></div>
+      <div class="bg__glow bg__glow--white"></div>
+      <canvas id="fxCanvas" class="bg__fx"></canvas>
+    </div>
+
+    <!-- Navbar -->
+    <header class="header">
+      <nav class="nav container">
+        <a class="brand" href="/" aria-label="Go to home">
+          <span class="brand__mark"><i class="fa-solid fa-play"></i></span>
+          <span class="brand__text">
+            <span class="brand__title">Trending Analytics</span>
+            <span class="brand__sub">AI Dashboard</span>
+          </span>
+        </a>
+
+        <div class="nav__menu">
+          <a class="nav__link" href="/">Home</a>
+          <a class="nav__link" href="/login">Login</a>
+          <a class="nav__link is-active" href="/register">Register</a>
+        </div>
+      </nav>
+    </header>
+
+    <main class="auth">
+      <div class="container">
+        <div class="auth__wrap glass">
+          <div class="auth__head">
+            <div class="chip">
+              <span class="chip__dot"></span>
+              <span>Fast Setup • Secure Hashing • JWT Session</span>
+            </div>
+            <h1 class="auth__title">Create Account</h1>
+            <p class="auth__sub">Sign up to unlock the protected analytics dashboard.</p>
+          </div>
+
+          {% if error %}
+          <div class="auth__error" role="alert">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>{{ error }}</span>
+          </div>
+          {% endif %}
+
+          <form id="registerForm" class="auth__form" method="POST" action="/register" novalidate>
+            <label class="field">
+              <span class="field__label">Name</span>
+              <div class="field__control">
+                <i class="fa-regular fa-user"></i>
+                <input id="name" name="name" type="text" placeholder="Your Name" autocomplete="name" required />
+              </div>
+              <small class="field__error" data-error-for="name"></small>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Email</span>
+              <div class="field__control">
+                <i class="fa-regular fa-envelope"></i>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+              <small class="field__error" data-error-for="email"></small>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Password</span>
+              <div class="field__control">
+                <i class="fa-solid fa-lock"></i>
+                <input id="password" name="password" type="password" placeholder="Minimum 6 characters" required />
+                <button class="field__toggle" type="button" aria-label="Toggle password visibility">
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </div>
+              <small class="field__error" data-error-for="password"></small>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Confirm Password</span>
+              <div class="field__control">
+                <i class="fa-solid fa-shield-halved"></i>
+                <input
+                  id="confirm_password"
+                  name="confirm_password"
+                  type="password"
+                  placeholder="Re-enter password"
+                  required
+                />
+              </div>
+              <small class="field__error" data-error-for="confirm_password"></small>
+            </label>
+
+            <button id="registerBtn" class="btn btn--primary btn--gradient btn--glow auth__submit" type="submit">
+              <span>Create Account</span>
+              <i class="fa-solid fa-user-plus"></i>
+            </button>
+
+            <div class="auth__foot">
+              <span>Already have an account?</span>
+              <a class="auth__link" href="/login">Login</a>
+            </div>
+          </form>
+
+          <div id="authSpinner" class="auth__spinner" aria-hidden="true">
+            <span class="spinner"></span>
+            <span>Creating account…</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  </body>
+</html>
+

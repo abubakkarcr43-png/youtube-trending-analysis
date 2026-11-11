@@ -1,0 +1,63 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#07060A"/>
+      <stop offset="0.58" stop-color="#0C0D18"/>
+      <stop offset="1" stop-color="#080810"/>
+    </linearGradient>
+    <radialGradient id="redGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(360 220) rotate(20) scale(520 420)">
+      <stop stop-color="#FF003C" stop-opacity="0.30"/>
+      <stop offset="1" stop-color="#FF003C" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-40" y="-40" width="1680" height="1080" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#redGlow)"/>
+  <g opacity="0.15">
+    <path d="M0 160H1600M0 260H1600M0 360H1600M0 460H1600M0 560H1600M0 660H1600M0 760H1600M0 860H1600" stroke="#FFFFFF"/>
+    <path d="M180 0V1000M360 0V1000M540 0V1000M720 0V1000M900 0V1000M1080 0V1000M1260 0V1000M1440 0V1000" stroke="#FFFFFF" stroke-opacity="0.35"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="96" y="72" width="1408" height="856" rx="34" fill="#0D0F1D" fill-opacity="0.95" stroke="#FFFFFF" stroke-opacity="0.12"/>
+    <rect x="96" y="72" width="1408" height="64" rx="34" fill="#111327"/>
+    <circle cx="136" cy="104" r="10" fill="#FF5F57"/>
+    <circle cx="166" cy="104" r="10" fill="#FFBD2E"/>
+    <circle cx="196" cy="104" r="10" fill="#28C840"/>
+    <text x="252" y="110" fill="#FFFFFF" fill-opacity="0.65" font-family="Inter, Arial, sans-serif" font-size="14">http://localhost:5000/login</text>
+
+    <rect x="96" y="136" width="1408" height="792" rx="0" fill="#0B0D19"/>
+
+    <g transform="translate(170 180)">
+      <text x="0" y="0" fill="#FFFFFF" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="48" font-weight="700">Welcome Back</text>
+      <text x="0" y="38" fill="#FFFFFF" fill-opacity="0.64" font-family="Inter, Arial, sans-serif" font-size="19">Login to access the protected analytics dashboard.</text>
+
+      <rect x="0" y="86" width="1260" height="620" rx="32" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.12"/>
+
+      <rect x="84" y="128" width="1092" height="54" rx="18" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.11"/>
+      <circle cx="118" cy="155" r="12" fill="#FF0033"/>
+      <text x="148" y="160" fill="#FFFFFF" fill-opacity="0.80" font-family="Inter, Arial, sans-serif" font-size="16">Secure Access  JWT  7-day session</text>
+
+      <rect x="84" y="214" width="1092" height="104" rx="24" fill="#0E1020" stroke="#FFFFFF" stroke-opacity="0.10"/>
+      <text x="116" y="252" fill="#FFFFFF" fill-opacity="0.64" font-family="Inter, Arial, sans-serif" font-size="15">Username</text>
+      <rect x="116" y="268" width="1026" height="34" rx="14" fill="#06070D" fill-opacity="0.7"/>
+      <text x="136" y="291" fill="#FFFFFF" fill-opacity="0.40" font-family="Inter, Arial, sans-serif" font-size="16">abubakkar</text>
+
+      <rect x="84" y="348" width="1092" height="104" rx="24" fill="#0E1020" stroke="#FFFFFF" stroke-opacity="0.10"/>
+      <text x="116" y="386" fill="#FFFFFF" fill-opacity="0.64" font-family="Inter, Arial, sans-serif" font-size="15">Password</text>
+      <rect x="116" y="402" width="1026" height="34" rx="14" fill="#06070D" fill-opacity="0.7"/>
+      <text x="136" y="425" fill="#FFFFFF" fill-opacity="0.40" font-family="Inter, Arial, sans-serif" font-size="16">••••••••••</text>
+
+      <rect x="84" y="486" width="1092" height="62" rx="18" fill="#FF0033"/>
+      <text x="532" y="526" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="19" font-weight="700">Login</text>
+
+      <text x="84" y="602" fill="#FFFFFF" fill-opacity="0.54" font-family="Inter, Arial, sans-serif" font-size="15">New here? Create an account</text>
+
+      <rect x="860" y="614" width="316" height="64" rx="18" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.11"/>
+      <text x="892" y="653" fill="#FFFFFF" fill-opacity="0.76" font-family="Inter, Arial, sans-serif" font-size="16">Authenticating...</text>
+    </g>
+  </g>
+</svg>

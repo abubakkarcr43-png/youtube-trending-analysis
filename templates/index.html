@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!--
+      YouTube Trending Analytics Landing Page (College Project Demo)
+      - Modern, futuristic, premium UI
+      - Dark gradient + YouTube-inspired red accents
+      - Glassmorphism cards, hover effects, counters, loading animation
+    -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Trending Analytics Dashboard</title>
+
+    <!-- Fonts: professional + futuristic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+
+    <!-- App CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+
+  <body class="vibrant-ui">
+    <!-- Loading Screen (modern, animated) -->
+    <div id="pageLoader" class="loader" aria-label="Loading">
+      <div class="loader__inner">
+        <div class="loader__ring"></div>
+        <div class="loader__text">
+          <span class="loader__brand">YT</span>
+          <span class="loader__label">Preparing Analytics</span>
+        </div>
+        <div class="loader__bar">
+          <span class="loader__barFill"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Background FX layer (animated gradient + particles + glow) -->
+    <div class="bg" aria-hidden="true">
+      <div class="bg__grid"></div>
+      <div class="bg__glow bg__glow--red"></div>
+      <div class="bg__glow bg__glow--white"></div>
+      <canvas id="fxCanvas" class="bg__fx"></canvas>
+    </div>
+
+    <!-- Navbar -->
+    <header class="header">
+      <nav class="nav container">
+        <a class="brand" href="#home" aria-label="Go to home">
+          <span class="brand__mark">
+            <i class="fa-solid fa-play"></i>
+          </span>
+          <span class="brand__text">
+            <span class="brand__title">Trending Analytics</span>
+            <span class="brand__sub">AI Dashboard</span>
+          </span>
+        </a>
+
+        <button id="navToggle" class="nav__toggle" aria-label="Open menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div id="navMenu" class="nav__menu">
+          <!-- Smooth scroll links -->
+          <a class="nav__link is-active" href="#home">Home</a>
+          <a class="nav__link" href="#trending">Trending Videos</a>
+          <a class="nav__link" href="#creators">Creators</a>
+          <a class="nav__link" href="#analytics">Analytics</a>
+          <a class="nav__link" href="#insights">Insights</a>
+
+          <!-- Auth-aware navbar actions -->
+          {% if user %}
+          <a class="nav__link" href="/dashboard">Dashboard</a>
+          <div class="navUser glass2" title="Logged in user">
+            <span class="navUser__avatar">{{ (user.email[:1] or 'U') | upper }}</span>
+            <span class="navUser__email">{{ user.email }}</span>
+          </div>
+          <a class="nav__cta btn btn--glow" href="/logout">
+            <span>Logout</span>
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </a>
+          {% else %}
+          <a class="nav__cta btn btn--glow" href="/login">
+            <span>Login</span>
+            <i class="fa-solid fa-right-to-bracket"></i>
+          </a>
+          <a class="nav__cta btn btn--glow btn--gradient" href="/register">
+            <span>Register</span>
+            <i class="fa-solid fa-user-plus"></i>
+          </a>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main -->
+    <main id="home">
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero__overlay" aria-hidden="true"></div>
+
+        <div class="container hero__grid">
+          <div class="hero__content">
+            <div class="chip">
+              <span class="chip__dot"></span>
+              <span>Real-time • AI-powered • Data-driven</span>
+            </div>
+
+            <h1 class="hero__title">
+              YouTube Trending Analytics
+              <span class="hero__titleAccent">Dashboard</span>
+            </h1>
+
+            <p class="hero__subtitle">
+              Analyze trending YouTube videos and creators with premium, futuristic insights:
+              growth signals, engagement ratios, category shifts, and AI trend prediction.
+            </p>
+
+            <div class="hero__actions">
+              <a class="btn btn--primary btn--gradient" href="#dashboard">
+                <span>Explore Dashboard</span>
+                <i class="fa-solid fa-chart-line"></i>
+              </a>
+              <a class="btn btn--secondary" href="#features">
+                <span>See Features</span>
+                <i class="fa-regular fa-circle-play"></i>
+              </a>
+            </div>
+
+            <!-- Animated stats counters -->
+            <div class="hero__stats" aria-label="Key statistics">
+              <div class="stat glass">
+                <div class="stat__label">Tracked Views</div>
+                <div class="stat__value">
+                  <span class="counter" data-target="248">0</span><span class="stat__unit">M+</span>
+                </div>
+                <div class="stat__hint">Across trending content</div>
+              </div>
+              <div class="stat glass">
+                <div class="stat__label">Creators Indexed</div>
+                <div class="stat__value">
+                  <span class="counter" data-target="1260">0</span><span class="stat__unit">+</span>
+                </div>
+                <div class="stat__hint">Channels & influencers</div>
+              </div>
+              <div class="stat glass">
+                <div class="stat__label">AI Confidence</div>
+                <div class="stat__value">
+                  <span class="counter" data-target="94">0</span><span class="stat__unit">%</span>
+                </div>
+                <div class="stat__hint">Trend prediction score</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hero visual / banner -->
+          <div class="hero__visual" aria-label="Dashboard hero preview">
+            <div class="heroCard glass">
+              <div class="heroCard__top">
+                <div class="heroCard__badge">
+                  <i class="fa-solid fa-bolt"></i>
+                  <span>Live Pulse</span>
+                </div>
+                <div class="heroCard__status">
+                  <span class="dot dot--green"></span>
+                  <span id="liveLabel">Streaming metrics</span>
+                </div>
+              </div>
+
+              <div class="heroCard__mid">
+                <img
+                  class="heroCard__img"
+                  src="{{ url_for('static', filename='img/hero.svg') }}"
+                  alt="YouTube analytics banner"
+                  loading="lazy"
+                />
+              </div>
+
+              <div class="heroCard__bottom">
+                <div class="miniMetric">
+                  <div class="miniMetric__label">Trending Score</div>
+                  <div class="miniMetric__value"><span id="trendScore">8.6</span>/10</div>
+                  <div class="miniMetric__bar">
+                    <span id="trendBar" style="width: 86%"></span>
+                  </div>
+                </div>
+
+                <div class="pills">
+                  <span class="pill"><i class="fa-solid fa-hashtag"></i> Shorts</span>
+                  <span class="pill"><i class="fa-solid fa-fire"></i> Viral</span>
+                  <span class="pill"><i class="fa-solid fa-globe"></i> Global</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Floating analytics elements -->
+            <div class="float float--a glass" aria-hidden="true">
+              <i class="fa-solid fa-eye"></i>
+              <div>
+                <div class="float__kpi">+12.4%</div>
+                <div class="float__label">View Velocity</div>
+              </div>
+            </div>
+            <div class="float float--b glass" aria-hidden="true">
+              <i class="fa-solid fa-heart"></i>
+              <div>
+                <div class="float__kpi">1 : <span id="ratioPulse">28</span></div>
+                <div class="float__label">Like / Comment</div>
+              </div>
+            </div>
+            <div class="float float--c glass" aria-hidden="true">
+              <i class="fa-solid fa-user-plus"></i>
+              <div>
+                <div class="float__kpi">+<span id="subsPulse">3.2</span>K</div>
+                <div class="float__label">Subs / hr</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero__scrollHint" aria-hidden="true">
+          <span>Scroll</span>
+          <i class="fa-solid fa-computer-mouse"></i>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" class="section">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">Features Built for Trending Intelligence</h2>
+            <p class="section__subtitle">
+              Everything you need to showcase a premium, AI-powered analytics platform design.
+            </p>
+          </div>
+
+          <div class="features">
+            <article class="feature glass">
+              <i class="fa-solid fa-arrow-trend-up feature__icon"></i>
+              <h3 class="feature__title">Trending Video Analysis</h3>
+              <p class="feature__text">Detect sudden spikes, velocity, and retention signals for viral momentum.</p>
+            </article>
+            <article class="feature glass">
+              <i class="fa-solid fa-chart-area feature__icon"></i>
+              <h3 class="feature__title">Channel Growth Tracking</h3>
+              <p class="feature__text">Monitor subscriber surges and content cadence that drives sustained growth.</p>
+            </article>
+            <article class="feature glass">
+              <i class="fa-solid fa-layer-group feature__icon"></i>
+              <h3 class="feature__title">Category-wise Trends</h3>
+              <p class="feature__text">Compare categories with heat intensity and daily rank movement.</p>
+            </article>
+            <article class="feature glass">
+              <i class="fa-solid fa-hand-holding-heart feature__icon"></i>
+              <h3 class="feature__title">Engagement Analytics</h3>
+              <p class="feature__text">Track likes, comments, shares, and interaction quality in one place.</p>
+            </article>
+            <article class="feature glass">
+              <i class="fa-solid fa-wand-magic-sparkles feature__icon"></i>
+              <h3 class="feature__title">View Prediction</h3>
+              <p class="feature__text">AI forecast of next 24–72 hours view trajectory with confidence bands.</p>
+            </article>
+            <article class="feature glass">
+              <i class="fa-solid fa-users-viewfinder feature__icon"></i>
+              <h3 class="feature__title">Audience Insights</h3>
+              <p class="feature__text">Discover viewer regions, watch time patterns, and returning audience signals.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Cards -->
+      <section id="analytics" class="section section--dense">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">Core Metrics Snapshot</h2>
+            <p class="section__subtitle">Interactive cards with hover glow and micro-animations.</p>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-eye"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Total Views</div>
+                <div class="kpi__value"><span class="counter" data-target="684">0</span><span class="kpi__unit">M</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> 9.2%</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-thumbs-up"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Likes</div>
+                <div class="kpi__value"><span class="counter" data-target="38">0</span><span class="kpi__unit">M</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> 6.5%</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-comments"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Comments</div>
+                <div class="kpi__value"><span class="counter" data-target="4">0</span><span class="kpi__unit">M</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> 3.1%</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-user-plus"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Subscribers</div>
+                <div class="kpi__value"><span class="counter" data-target="129">0</span><span class="kpi__unit">K</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> 11.8%</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-stopwatch"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Watch Time</div>
+                <div class="kpi__value"><span class="counter" data-target="72">0</span><span class="kpi__unit">K hrs</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> 4.7%</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-gauge-high"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Trending Score</div>
+                <div class="kpi__value"><span id="kpiTrending">8.6</span><span class="kpi__unit">/10</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--live"><i class="fa-solid fa-signal"></i> live</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Placeholder Section -->
+      <section id="insights" class="section">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">Charts & Insights</h2>
+            <p class="section__subtitle">
+              Polished placeholders (interactive) that look like a real analytics product.
+            </p>
+          </div>
+
+          <div class="charts">
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Top Trending Categories</h3>
+                <button class="chipBtn" data-action="refresh" aria-label="Refresh chart">
+                  <i class="fa-solid fa-rotate"></i><span>Refresh</span>
+                </button>
+              </div>
+              <canvas class="chart__canvas" data-chart="categories" width="640" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">AI ranked</span>
+                <span class="tag">velocity</span>
+                <span class="tag">momentum</span>
+              </div>
+            </div>
+
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Most Viewed Channels</h3>
+                <div class="seg">
+                  <button class="seg__btn is-on" data-seg="7d">7D</button>
+                  <button class="seg__btn" data-seg="30d">30D</button>
+                  <button class="seg__btn" data-seg="90d">90D</button>
+                </div>
+              </div>
+              <canvas class="chart__canvas" data-chart="channels" width="640" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">top creators</span>
+                <span class="tag">avg watch</span>
+                <span class="tag">growth</span>
+              </div>
+            </div>
+
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Daily View Growth</h3>
+                <span class="chart__hint"><i class="fa-solid fa-sparkles"></i> anomaly detection</span>
+              </div>
+              <canvas class="chart__canvas" data-chart="growth" width="640" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">forecast</span>
+                <span class="tag">baseline</span>
+                <span class="tag">spikes</span>
+              </div>
+            </div>
+
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Like vs Comment Ratio</h3>
+                <span class="chart__hint"><i class="fa-solid fa-scale-balanced"></i> quality score</span>
+              </div>
+              <canvas class="chart__canvas" data-chart="ratio" width="640" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">engagement</span>
+                <span class="tag">sentiment</span>
+                <span class="tag">depth</span>
+              </div>
+            </div>
+
+            <div class="chart glass chart--wide">
+              <div class="chart__head">
+                <h3 class="chart__title">Region-wise Trends</h3>
+                <span class="chart__hint"><i class="fa-solid fa-globe"></i> geo heat intensity</span>
+              </div>
+              <div class="map">
+                <div class="map__legend">
+                  <div class="map__row"><span class="map__dot map__dot--hot"></span> Hot</div>
+                  <div class="map__row"><span class="map__dot map__dot--mid"></span> Rising</div>
+                  <div class="map__row"><span class="map__dot map__dot--cool"></span> Stable</div>
+                </div>
+                <div class="map__grid" id="regionGrid" aria-label="Region trend tiles"></div>
+              </div>
+              <div class="chart__foot">
+                <span class="tag">real-time</span>
+                <span class="tag">regional</span>
+                <span class="tag">signals</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Creators + Viral + AI Prediction + Real-time Analytics -->
+      <section id="creators" class="section section--dense">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">Top Creators & Viral Videos</h2>
+            <p class="section__subtitle">Interactive UI placeholders with premium cards and live badges.</p>
+          </div>
+
+          <div class="split">
+            <div class="panel glass">
+              <div class="panel__head">
+                <h3 class="panel__title"><i class="fa-solid fa-crown"></i> Top Creators</h3>
+                <span class="badge badge--live"><span class="dot dot--red"></span> live</span>
+              </div>
+              <div class="list" id="creatorsList" aria-label="Top creators list"></div>
+            </div>
+
+            <div class="panel glass">
+              <div class="panel__head">
+                <h3 class="panel__title"><i class="fa-solid fa-fire"></i> Viral Videos</h3>
+                <span class="badge badge--ai"><i class="fa-solid fa-wand-magic-sparkles"></i> AI ranked</span>
+              </div>
+              <div class="list" id="viralList" aria-label="Viral videos list"></div>
+            </div>
+          </div>
+
+          <div class="tri">
+            <div class="panel glass">
+              <div class="panel__head">
+                <h3 class="panel__title"><i class="fa-solid fa-brain"></i> AI Trend Prediction</h3>
+                <button class="chipBtn" data-action="predict"><i class="fa-solid fa-wand-magic"></i><span>Run</span></button>
+              </div>
+              <div class="ai">
+                <div class="ai__row">
+                  <div class="ai__label">Next Viral Probability</div>
+                  <div class="ai__value"><span id="aiProb">0</span>%</div>
+                </div>
+                <div class="ai__row">
+                  <div class="ai__label">Predicted View Lift</div>
+                  <div class="ai__value">+<span id="aiLift">0</span>%</div>
+                </div>
+                <div class="ai__row">
+                  <div class="ai__label">Recommended Category</div>
+                  <div class="ai__value" id="aiCategory">—</div>
+                </div>
+                <div class="ai__bar">
+                  <span id="aiBar"></span>
+                </div>
+                <p class="ai__note">
+                  This is a presentation-friendly placeholder that updates with smooth micro-animations.
+                </p>
+              </div>
+            </div>
+
+            <div class="panel glass">
+              <div class="panel__head">
+                <h3 class="panel__title"><i class="fa-solid fa-satellite-dish"></i> Real-time Analytics</h3>
+                <span class="badge badge--pulse"><span class="dot dot--green"></span> streaming</span>
+              </div>
+              <div class="realtime">
+                <div class="realtime__kpi">
+                  <div class="realtime__label">View Velocity</div>
+                  <div class="realtime__value"><span id="rtVelocity">0</span>k/min</div>
+                </div>
+                <div class="realtime__kpi">
+                  <div class="realtime__label">Engagement Pulse</div>
+                  <div class="realtime__value"><span id="rtPulse">0</span>/100</div>
+                </div>
+                <div class="realtime__kpi">
+                  <div class="realtime__label">Retention Index</div>
+                  <div class="realtime__value"><span id="rtRetention">0</span>%</div>
+                </div>
+                <div class="realtime__spark">
+                  <canvas class="spark" id="sparkCanvas" width="640" height="160"></canvas>
+                </div>
+                <div class="realtime__note">
+                  <i class="fa-solid fa-circle-info"></i>
+                  <span>UI-only simulation (no API calls) for your project demo.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel glass">
+              <div class="panel__head">
+                <h3 class="panel__title"><i class="fa-solid fa-display"></i> Dashboard Preview</h3>
+                <a class="chipBtn" href="#dashboard"><i class="fa-solid fa-arrow-down"></i><span>View</span></a>
+              </div>
+              <div class="preview">
+                <div class="preview__top">
+                  <div class="preview__dots">
+                    <span></span><span></span><span></span>
+                  </div>
+                  <div class="preview__tabs">
+                    <span class="tab is-on">Overview</span>
+                    <span class="tab">Trends</span>
+                    <span class="tab">Creators</span>
+                  </div>
+                </div>
+                <div class="preview__grid">
+                  <div class="preview__card glass2">
+                    <div class="preview__label">Realtime Score</div>
+                    <div class="preview__big" id="previewScore">86</div>
+                    <div class="preview__mini">AI stability index</div>
+                  </div>
+                  <div class="preview__card glass2">
+                    <div class="preview__label">Top Category</div>
+                    <div class="preview__big" id="previewCat">Gaming</div>
+                    <div class="preview__mini">Rank movement: +3</div>
+                  </div>
+                  <div class="preview__card glass2 preview__card--wide">
+                    <div class="preview__label">Signal Stream</div>
+                    <div class="stream" id="signalStream" aria-label="Signal stream rows"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Full dashboard section anchor -->
+      <section id="dashboard" class="section section--dashboard">
+        <div class="container">
+          <div class="section__head">
+            <h2 class="section__title">Interactive Dashboard UI (Placeholders)</h2>
+            <p class="section__subtitle">
+              Click around, toggle filters, and watch the UI respond with smooth animations.
+            </p>
+          </div>
+
+          <div class="dash glass">
+            <div class="dash__top">
+              <div class="dash__left">
+                <div class="dash__title">
+                  <i class="fa-solid fa-square-poll-vertical"></i>
+                  <span>Trending Overview</span>
+                </div>
+                <div class="dash__meta">
+                  <span class="badge badge--dark"><i class="fa-solid fa-clock"></i> Updated <span id="updatedAgo">just now</span></span>
+                  <span class="badge badge--dark"><i class="fa-solid fa-shield"></i> Demo Mode</span>
+                </div>
+              </div>
+
+              <div class="dash__actions">
+                <div class="search">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input id="dashSearch" type="text" placeholder="Search channels, categories..." />
+                </div>
+                <button id="toggleTheme" class="btn btn--tiny btn--ghost" type="button" aria-label="Toggle glow mode">
+                  <i class="fa-solid fa-wand-magic-sparkles"></i><span>Glow</span>
+                </button>
+                <button id="dashRefresh" class="btn btn--tiny btn--gradient" type="button">
+                  <i class="fa-solid fa-rotate"></i><span>Refresh</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="dash__filters">
+              <button class="filter is-on" data-filter="all"><i class="fa-solid fa-infinity"></i> All</button>
+              <button class="filter" data-filter="music"><i class="fa-solid fa-music"></i> Music</button>
+              <button class="filter" data-filter="gaming"><i class="fa-solid fa-gamepad"></i> Gaming</button>
+              <button class="filter" data-filter="news"><i class="fa-solid fa-newspaper"></i> News</button>
+              <button class="filter" data-filter="education"><i class="fa-solid fa-graduation-cap"></i> Education</button>
+              <button class="filter" data-filter="tech"><i class="fa-solid fa-microchip"></i> Tech</button>
+              <div class="slider">
+                <span class="slider__label">AI Sensitivity</span>
+                <input id="aiSensitivity" type="range" min="10" max="95" value="72" />
+                <span class="slider__value" id="aiSensitivityVal">72</span>
+              </div>
+            </div>
+
+            <div class="dash__grid">
+              <div class="dashCard glass2">
+                <div class="dashCard__head">
+                  <h3>Realtime KPI</h3>
+                  <span class="tiny"><span class="dot dot--green"></span> live</span>
+                </div>
+                <div class="dashCard__body">
+                  <div class="meter">
+                    <div class="meter__row">
+                      <span>Trend Heat</span>
+                      <strong id="heatVal">78</strong>
+                    </div>
+                    <div class="meter__bar"><span id="heatBar"></span></div>
+                  </div>
+                  <div class="meter">
+                    <div class="meter__row">
+                      <span>Creator Momentum</span>
+                      <strong id="momVal">64</strong>
+                    </div>
+                    <div class="meter__bar"><span id="momBar"></span></div>
+                  </div>
+                  <div class="meter">
+                    <div class="meter__row">
+                      <span>Audience Pull</span>
+                      <strong id="audVal">71</strong>
+                    </div>
+                    <div class="meter__bar"><span id="audBar"></span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashCard glass2 dashCard--wide">
+                <div class="dashCard__head">
+                  <h3>Active Trending Feed</h3>
+                  <span class="tiny"><i class="fa-solid fa-wifi"></i> realtime</span>
+                </div>
+                <div class="dashCard__body">
+                  <div class="feed" id="trendingFeed" aria-label="Trending feed rows"></div>
+                </div>
+              </div>
+
+              <div class="dashCard glass2">
+                <div class="dashCard__head">
+                  <h3>AI Insight</h3>
+                  <span class="tiny"><i class="fa-solid fa-brain"></i> model</span>
+                </div>
+                <div class="dashCard__body">
+                  <div class="insight">
+                    <div class="insight__icon"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div class="insight__text" id="aiInsightText">
+                      Shorts in <strong>Gaming</strong> show high velocity + strong retention. Prioritize creators with
+                      rising comment depth.
+                    </div>
+                  </div>
+                  <button class="btn btn--tiny btn--primary btn--glow" id="newInsight" type="button">
+                    <i class="fa-solid fa-sparkles"></i><span>Generate Insight</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container footer__grid">
+        <div class="footer__col">
+          <div class="brand brand--footer">
+            <span class="brand__mark"><i class="fa-solid fa-play"></i></span>
+            <span class="brand__text">
+              <span class="brand__title">Trending Analytics</span>
+              <span class="brand__sub">Futuristic UI Demo</span>
+            </span>
+          </div>
+          <p class="footer__text">
+            A modern landing page concept for a YouTube Trending Analytics platform — designed for a premium,
+            AI-powered, data-driven feel.
+          </p>
+          <div class="social">
+            <a class="social__link" href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            <a class="social__link" href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+            <a class="social__link" href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a class="social__link" href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          </div>
+        </div>
+
+        <div class="footer__col">
+          <h4 class="footer__title">Contact</h4>
+          <ul class="footer__list">
+            <li><i class="fa-solid fa-envelope"></i> <span>your-email@example.com</span></li>
+            <li><i class="fa-solid fa-location-dot"></i> <span>Your College / City</span></li>
+            <li><i class="fa-solid fa-phone"></i> <span>+00 00000 00000</span></li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4 class="footer__title">About Project</h4>
+          <ul class="footer__list">
+            <li><i class="fa-solid fa-check"></i> Flask + HTML/CSS/JS</li>
+            <li><i class="fa-solid fa-check"></i> Glassmorphism UI</li>
+            <li><i class="fa-solid fa-check"></i> Animated counters & charts</li>
+            <li><i class="fa-solid fa-check"></i> Responsive for all screens</li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4 class="footer__title">GitHub</h4>
+          <p class="footer__text">Add your repository link here for submission.</p>
+          <a class="btn btn--secondary btn--glow" href="#" aria-label="GitHub repository link">
+            <i class="fa-brands fa-github"></i><span>View Source</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <div class="container footer__bottomInner">
+          <span>© <span id="yearNow"></span> Trending Analytics • College Project</span>
+          <span class="footer__tiny">Made with Flask • Futuristic UI</span>
+        </div>
+      </div>
+    </footer>
+
+    <!-- App JS -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
+

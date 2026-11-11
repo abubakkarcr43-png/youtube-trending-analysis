@@ -1,0 +1,88 @@
+<svg width="1600" height="1000" viewBox="0 0 1600 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#07060A"/>
+      <stop offset="0.55" stop-color="#0B0B14"/>
+      <stop offset="1" stop-color="#080810"/>
+    </linearGradient>
+    <radialGradient id="redGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(300 210) rotate(20) scale(620 470)">
+      <stop stop-color="#FF003C" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FF003C" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="whiteGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1270 180) rotate(20) scale(520 400)">
+      <stop stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="btn" x1="260" y1="0" x2="260" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FF0033"/>
+      <stop offset="1" stop-color="#FF2A2A"/>
+    </linearGradient>
+    <filter id="shadow" x="-40" y="-40" width="1680" height="1080" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="20" stdDeviation="24" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#redGlow)"/>
+  <rect width="1600" height="1000" fill="url(#whiteGlow)"/>
+
+  <g opacity="0.16">
+    <path d="M0 120H1600M0 220H1600M0 320H1600M0 420H1600M0 520H1600M0 620H1600M0 720H1600M0 820H1600" stroke="#FFFFFF"/>
+    <path d="M160 0V1000M320 0V1000M480 0V1000M640 0V1000M800 0V1000M960 0V1000M1120 0V1000M1280 0V1000M1440 0V1000" stroke="#FFFFFF" stroke-opacity="0.35"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <rect x="96" y="72" width="1408" height="856" rx="34" fill="#0D0F1D" fill-opacity="0.95" stroke="#FFFFFF" stroke-opacity="0.12"/>
+    <rect x="96" y="72" width="1408" height="64" rx="34" fill="#111327"/>
+    <circle cx="136" cy="104" r="10" fill="#FF5F57"/>
+    <circle cx="166" cy="104" r="10" fill="#FFBD2E"/>
+    <circle cx="196" cy="104" r="10" fill="#28C840"/>
+    <rect x="252" y="88" width="280" height="32" rx="16" fill="#06070D" fill-opacity="0.7"/>
+    <text x="268" y="109" fill="#FFFFFF" fill-opacity="0.65" font-family="Inter, Arial, sans-serif" font-size="14">http://localhost:5000/</text>
+
+    <rect x="96" y="136" width="1408" height="792" rx="0" fill="#0B0D19"/>
+
+    <g transform="translate(140 176)">
+      <text x="0" y="0" fill="#FFFFFF" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="54" font-weight="700">YouTube Trending Analytics</text>
+      <text x="0" y="44" fill="#FFFFFF" fill-opacity="0.66" font-family="Inter, Arial, sans-serif" font-size="20">Landing page with summary metrics, visual highlights, and quick access to login.</text>
+
+      <rect x="0" y="86" width="188" height="54" rx="16" fill="url(#btn)"/>
+      <text x="34" y="120" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">Get Started</text>
+
+      <rect x="204" y="86" width="178" height="54" rx="16" fill="#FFFFFF" fill-opacity="0.05" stroke="#FFFFFF" stroke-opacity="0.14"/>
+      <text x="240" y="120" fill="#FFFFFF" fill-opacity="0.88" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">Dashboard</text>
+
+      <rect x="0" y="176" width="240" height="124" rx="22" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.12"/>
+      <text x="24" y="214" fill="#FFFFFF" fill-opacity="0.66" font-family="Inter, Arial, sans-serif" font-size="16">Total Views</text>
+      <text x="24" y="258" fill="#FFFFFF" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="36" font-weight="700">2.39B</text>
+
+      <rect x="260" y="176" width="240" height="124" rx="22" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.12"/>
+      <text x="284" y="214" fill="#FFFFFF" fill-opacity="0.66" font-family="Inter, Arial, sans-serif" font-size="16">Total Likes</text>
+      <text x="284" y="258" fill="#FFFFFF" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="36" font-weight="700">80.9M</text>
+
+      <rect x="520" y="176" width="240" height="124" rx="22" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.12"/>
+      <text x="544" y="214" fill="#FFFFFF" fill-opacity="0.66" font-family="Inter, Arial, sans-serif" font-size="16">Trending Videos</text>
+      <text x="544" y="258" fill="#FFFFFF" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="36" font-weight="700">1000+</text>
+
+      <rect x="780" y="176" width="240" height="124" rx="22" fill="#FFFFFF" fill-opacity="0.06" stroke="#FFFFFF" stroke-opacity="0.12"/>
+      <text x="804" y="214" fill="#FFFFFF" fill-opacity="0.66" font-family="Inter, Arial, sans-serif" font-size="16">Engagement Rate</text>
+      <text x="804" y="258" fill="#FFFFFF" font-family="Space Grotesk, Inter, Arial, sans-serif" font-size="36" font-weight="700">4.36%</text>
+
+      <rect x="0" y="340" width="1020" height="250" rx="26" fill="#FFFFFF" fill-opacity="0.04" stroke="#FFFFFF" stroke-opacity="0.12"/>
+      <text x="26" y="382" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700">Preview Highlights</text>
+      <path d="M42 520C110 468 156 492 214 432C276 368 348 420 418 358C486 300 554 338 626 286C706 230 792 272 864 220C922 178 978 184 1000 164" stroke="#FF0033" stroke-width="6" stroke-linecap="round"/>
+      <rect x="42" y="418" width="220" height="96" rx="18" fill="#111428" stroke="#FFFFFF" stroke-opacity="0.1"/>
+      <rect x="278" y="418" width="220" height="96" rx="18" fill="#111428" stroke="#FFFFFF" stroke-opacity="0.1"/>
+      <rect x="514" y="418" width="220" height="96" rx="18" fill="#111428" stroke="#FFFFFF" stroke-opacity="0.1"/>
+      <rect x="750" y="418" width="220" height="96" rx="18" fill="#111428" stroke="#FFFFFF" stroke-opacity="0.1"/>
+      <text x="58" y="452" fill="#FFFFFF" fill-opacity="0.64" font-family="Inter, Arial, sans-serif" font-size="14">Top Category</text>
+      <text x="58" y="486" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700">Music</text>
+      <text x="294" y="452" fill="#FFFFFF" fill-opacity="0.64" font-family="Inter, Arial, sans-serif" font-size="14">Top Channel</text>
+      <text x="294" y="486" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700">MrBeast</text>
+      <text x="530" y="452" fill="#FFFFFF" fill-opacity="0.64" font-family="Inter, Arial, sans-serif" font-size="14">Countries</text>
+      <text x="530" y="486" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700">USA, India, UK</text>
+      <text x="766" y="452" fill="#FFFFFF" fill-opacity="0.64" font-family="Inter, Arial, sans-serif" font-size="14">Data Source</text>
+      <text x="766" y="486" fill="#FFFFFF" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="700">yta.xlsx</text>
+    </g>
+  </g>
+</svg>

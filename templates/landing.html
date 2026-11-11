@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YT Analytics</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/app-icon.svg') }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #070915;
+        --bg-2: #0b0d1f;
+        --card: rgba(255, 255, 255, 0.06);
+        --stroke: rgba(255, 255, 255, 0.12);
+        --text: rgba(255, 255, 255, 0.93);
+        --muted: rgba(255, 255, 255, 0.66);
+        --purple: #7a5cff;
+        --purple-2: #9f64ff;
+        --red: #ff2a3d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--text);
+        background: radial-gradient(1000px 580px at 18% -8%, rgba(122, 92, 255, 0.3), transparent 60%),
+          radial-gradient(900px 560px at 85% 10%, rgba(159, 100, 255, 0.2), transparent 64%),
+          linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .container {
+        width: min(1180px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      .nav {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(12px);
+        background: rgba(7, 9, 21, 0.75);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+      .nav__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+      }
+      .brand__icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: block;
+        box-shadow: 0 8px 25px rgba(124, 77, 255, 0.4);
+      }
+      .nav__actions {
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        padding: 10px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--text);
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .btn--grad {
+        background: linear-gradient(90deg, var(--purple), var(--purple-2));
+        border-color: rgba(122, 92, 255, 0.4);
+      }
+
+      .hero {
+        padding: 64px 0 24px;
+      }
+      .hero__title {
+        font-size: clamp(2rem, 4.6vw, 4rem);
+        line-height: 1.05;
+        margin: 0;
+        letter-spacing: -0.02em;
+      }
+      .hero__title .accent {
+        color: #9f83ff;
+      }
+      .hero__sub {
+        margin-top: 14px;
+        color: var(--muted);
+        max-width: 60ch;
+        line-height: 1.65;
+      }
+      .hero__actions {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .stats {
+        margin-top: 28px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .card {
+        border: 1px solid var(--stroke);
+        background: var(--card);
+        border-radius: 16px;
+        padding: 14px;
+        backdrop-filter: blur(10px);
+      }
+      .card__label {
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      .card__value {
+        margin-top: 8px;
+        font-size: 1.55rem;
+        font-weight: 800;
+      }
+
+      .features {
+        padding: 30px 0 8px;
+      }
+      .features__grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .feature h3 {
+        margin: 0 0 6px;
+      }
+      .feature p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .cta {
+        margin-top: 24px;
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        gap: 10px;
+        align-items: center;
+      }
+      .input {
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid var(--stroke);
+        background: rgba(0, 0, 0, 0.2);
+        color: var(--text);
+        width: 100%;
+      }
+      .cta__text {
+        color: var(--muted);
+      }
+
+      .footerStats {
+        margin: 24px 0 50px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .pill {
+        border: 1px solid var(--stroke);
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 14px;
+        padding: 14px;
+        text-align: center;
+      }
+      .pill strong {
+        font-size: 1.2rem;
+      }
+      .pill span {
+        display: block;
+        margin-top: 4px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .stats,
+        .features__grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .cta {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 620px) {
+        .stats,
+        .features__grid,
+        .footerStats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="vibrant-ui">
+    <header class="nav">
+      <div class="container nav__inner">
+        <a class="brand" href="/">
+          <img class="brand__icon" src="{{ url_for('static', filename='img/app-icon.svg') }}" alt="YT Analytics icon" />
+          <span>YT Analytics</span>
+        </a>
+        <div class="nav__actions">
+          <a class="btn" href="/login">Login</a>
+          <a class="btn btn--grad" href="/login">Sign Up</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="hero">
+        <h1 class="hero__title">
+          Track. Analyze.
+          <br />
+          Grow Your YouTube <span class="accent">Channel.</span>
+        </h1>
+        <p class="hero__sub">
+          Turn your channel data into growth decisions with AI-driven insights, trend tracking, and real-time analytics.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--grad" href="/login">Get Started</a>
+          <a class="btn" href="#features">View Features</a>
+        </div>
+
+        <div class="stats">
+          <article class="card">
+            <div class="card__label">Total Views</div>
+            <div class="card__value">{{ "{:,}".format(stats.total_views) }}</div>
+          </article>
+          <article class="card">
+            <div class="card__label">Total Likes</div>
+            <div class="card__value">{{ "{:,}".format(stats.total_likes) }}</div>
+          </article>
+          <article class="card">
+            <div class="card__label">Trending Videos</div>
+            <div class="card__value">{{ "{:,}".format(stats.trending_videos) }}</div>
+          </article>
+          <article class="card">
+            <div class="card__label">Engagement Rate</div>
+            <div class="card__value">{{ stats.engagement_rate }}%</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="features" class="features">
+        <div class="features__grid">
+          <article class="card feature">
+            <h3>Real-time Data</h3>
+            <p>Live trend updates and watch signals from your latest dataset.</p>
+          </article>
+          <article class="card feature">
+            <h3>Powerful Analytics</h3>
+            <p>Deep breakdowns for views, likes, comments, and creator performance.</p>
+          </article>
+          <article class="card feature">
+            <h3>Smart Filters</h3>
+            <p>Quickly find patterns by channel, category, country, and date.</p>
+          </article>
+        </div>
+
+        <div class="card cta">
+          <div class="cta__text">Ready to grow your channel? Start free and explore your analytics dashboard.</div>
+          <input class="input" type="email" placeholder="Enter your email" />
+          <a class="btn btn--grad" href="/login">Sign Up Free</a>
+        </div>
+      </section>
+
+      <section class="footerStats">
+        <div class="pill"><strong>10K+</strong><span>Users</span></div>
+        <div class="pill"><strong>2M+</strong><span>Videos</span></div>
+        <div class="pill"><strong>120+</strong><span>Countries</span></div>
+      </section>
+    </main>
+  </body>
+</html>
+

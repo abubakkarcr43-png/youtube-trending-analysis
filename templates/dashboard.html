@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Protected Dashboard Page -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard • Trending Analytics</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='img/app-icon.svg') }}" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body class="vibrant-ui">
+    <!-- Loading Screen -->
+    <div id="pageLoader" class="loader" aria-label="Loading">
+      <div class="loader__inner">
+        <div class="loader__ring"></div>
+        <div class="loader__text">
+          <span class="loader__brand">YT</span>
+          <span class="loader__label">Opening Dashboard</span>
+        </div>
+        <div class="loader__bar">
+          <span class="loader__barFill"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Background FX -->
+    <div class="bg" aria-hidden="true">
+      <div class="bg__grid"></div>
+      <div class="bg__glow bg__glow--red"></div>
+      <div class="bg__glow bg__glow--white"></div>
+      <canvas id="fxCanvas" class="bg__fx"></canvas>
+    </div>
+
+    <!-- Navbar -->
+    <header class="header">
+      <nav class="nav container">
+        <a class="brand" href="/" aria-label="Go to home">
+          <span class="brand__mark"><i class="fa-solid fa-play"></i></span>
+          <span class="brand__text">
+            <span class="brand__title">Trending Analytics</span>
+            <span class="brand__sub">AI Dashboard</span>
+          </span>
+        </a>
+
+        <div class="nav__menu">
+          <a class="nav__link" href="/">Home</a>
+          <a class="nav__link is-active" href="/dashboard">Dashboard</a>
+          <button id="themeToggle" class="chipBtn" title="Toggle theme">
+            <i class="fa-solid fa-palette"></i>
+          </button>
+
+          {% if user %}
+          <div class="navUser glass2" title="Logged in user">
+            <span class="navUser__avatar">{{ (user.email[:1] or 'U') | upper }}</span>
+            <span class="navUser__email">{{ user.email }}</span>
+          </div>
+          <a class="nav__cta btn btn--glow" href="/logout">
+            <span>Logout</span><i class="fa-solid fa-right-from-bracket"></i>
+          </a>
+          {% else %}
+          <a class="nav__cta btn btn--glow btn--gradient" href="/login">
+            <span>Login</span><i class="fa-solid fa-right-to-bracket"></i>
+          </a>
+          {% endif %}
+        </div>
+      </nav>
+    </header>
+
+    <main class="dashPage">
+      <section class="section section--dense">
+        <div class="container">
+          <div class="section__head">
+            <h1 class="section__title">YouTube Trending Dashboard (Dataset)</h1>
+            <p class="section__subtitle">
+              Powered by your dataset <strong>`yta.xlsx`</strong>. This page is protected and redirects to <strong>/login</strong> if you’re logged out.
+            </p>
+          </div>
+
+          <div class="analysisTabs" role="tablist" aria-label="Dashboard analysis mode">
+            <button class="analysisTabs__button is-active" type="button" role="tab" aria-selected="true" data-analysis-mode="dataset">
+              <i class="fa-solid fa-table-cells-large"></i><span>Trending Dataset</span>
+            </button>
+            <button class="analysisTabs__button" type="button" role="tab" aria-selected="false" data-analysis-mode="channel">
+              <i class="fa-brands fa-youtube"></i><span>Channel Analysis</span>
+            </button>
+          </div>
+
+          <section id="channelAnalysis" class="channelAnalysis" hidden>
+            <div class="channelSearch glass">
+              <div>
+                <span class="eyebrow"><i class="fa-solid fa-satellite-dish"></i> Public YouTube Data API</span>
+                <h2 class="section__title">Analyze a channel</h2>
+                <p class="section__subtitle">Search a name, @handle, or channel ID to load live public statistics and video performance.</p>
+              </div>
+              <form id="channelSearchForm" class="channelSearch__form">
+                <label class="channelSearch__input">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                  <input id="channelQuery" type="search" placeholder="Enter YouTube Channel Name, @Handle or Channel ID" autocomplete="off" required />
+                </label>
+                <button id="analyzeChannelBtn" class="btn btn--gradient btn--glow" type="submit">
+                  <span>Analyze Channel</span><i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <button id="clearChannelBtn" class="chipBtn" type="button" title="Clear channel analysis" aria-label="Clear channel analysis">
+                  <i class="fa-solid fa-xmark"></i><span>Clear</span>
+                </button>
+              </form>
+              <div id="channelLoading" class="channelStatus" hidden><span class="spinner"></span><span>Fetching channel and video data...</span></div>
+              <div id="channelError" class="auth__error" role="alert" hidden><i class="fa-solid fa-triangle-exclamation"></i><span></span></div>
+              <div id="channelUpdated" class="channelUpdated" hidden></div>
+            </div>
+
+            <div id="channelResults" hidden>
+              <div class="channelIdentity glass">
+                <img id="channelAvatar" class="channelIdentity__avatar" alt="Channel profile" />
+                <div class="channelIdentity__body">
+                  <h2 id="channelName">—</h2><p id="channelHandle">—</p><p id="channelDescription"></p>
+                </div>
+                <a id="channelUrl" class="btn btn--tiny btn--ghost" href="#" target="_blank" rel="noopener"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>Open channel</span></a>
+              </div>
+
+              <div class="kpis channelKpis">
+                <div class="kpi glass"><div class="kpi__icon"><i class="fa-solid fa-users"></i></div><div class="kpi__meta"><div class="kpi__label">Subscribers</div><div id="channelSubscribers" class="kpi__value">N/A</div></div></div>
+                <div class="kpi glass"><div class="kpi__icon"><i class="fa-solid fa-eye"></i></div><div class="kpi__meta"><div class="kpi__label">Total Views</div><div id="channelViews" class="kpi__value">N/A</div></div></div>
+                <div class="kpi glass"><div class="kpi__icon"><i class="fa-solid fa-film"></i></div><div class="kpi__meta"><div class="kpi__label">Total Videos</div><div id="channelVideos" class="kpi__value">N/A</div></div></div>
+                <div class="kpi glass"><div class="kpi__icon"><i class="fa-solid fa-chart-line"></i></div><div class="kpi__meta"><div class="kpi__label">Average Views</div><div id="channelAverageViews" class="kpi__value">N/A</div></div></div>
+                <div class="kpi glass"><div class="kpi__icon"><i class="fa-solid fa-calendar-days"></i></div><div class="kpi__meta"><div class="kpi__label">Created</div><div id="channelCreated" class="kpi__value">N/A</div></div></div>
+                <div class="kpi glass"><div class="kpi__icon"><i class="fa-solid fa-earth-americas"></i></div><div class="kpi__meta"><div class="kpi__label">Country</div><div id="channelCountry" class="kpi__value">N/A</div></div></div>
+              </div>
+
+              <div class="channelSummary">
+                <div class="channelScore glass"><span class="eyebrow">Analytical score</span><strong id="channelScoreValue">N/A</strong><p id="channelScoreText">Based only on available public data. This is not an official YouTube score.</p></div>
+                <div class="channelInsights glass"><div class="chart__head"><h3 class="chart__title">Analytics Insights</h3><span class="chart__hint"><i class="fa-solid fa-lightbulb"></i> evidence-based</span></div><ul id="channelInsightsList"></ul></div>
+              </div>
+
+              <div class="charts channelCharts">
+                <div class="chart glass"><div class="chart__head"><h3 class="chart__title">Top Videos by Views</h3><span class="chart__hint">top 10</span></div><canvas id="channelTopViewsChart" class="chart__canvas"></canvas></div>
+                <div class="chart glass"><div class="chart__head"><h3 class="chart__title">Video Views Over Time</h3><span class="chart__hint">published date</span></div><canvas id="channelTimelineChart" class="chart__canvas"></canvas></div>
+                <div class="chart glass"><div class="chart__head"><h3 class="chart__title">Likes vs Comments</h3><span class="chart__hint">video relationship</span></div><canvas id="channelScatterChart" class="chart__canvas"></canvas></div>
+                <div class="chart glass"><div class="chart__head"><h3 class="chart__title">Upload Frequency</h3><span class="chart__hint">by month</span></div><canvas id="channelUploadChart" class="chart__canvas"></canvas></div>
+                <div class="chart glass chart--wide"><div class="chart__head"><h3 class="chart__title">Engagement Rate by Video</h3><span class="chart__hint">available statistics</span></div><canvas id="channelEngagementChart" class="chart__canvas"></canvas></div>
+              </div>
+
+              <div class="section__head channelSectionHead"><h2 class="section__title">Top Performing Videos</h2><div class="channelTools"><button id="downloadChannelReport" class="chipBtn" type="button"><i class="fa-solid fa-download"></i><span>Download Report</span></button><select id="videoSort" class="channelSelect"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="views">Most viewed</option><option value="likes">Most liked</option><option value="comments">Most commented</option></select></div></div>
+              <div id="topVideos" class="videoGrid"></div>
+              <div class="section__head channelSectionHead"><h2 class="section__title">Recent Videos</h2><div class="search channelVideoSearch"><i class="fa-solid fa-magnifying-glass"></i><input id="videoSearch" type="search" placeholder="Search videos..." /></div></div>
+              <div id="recentVideos" class="videoTable glass"></div>
+            </div>
+          </section>
+
+          <!-- Dataset KPIs -->
+          <div id="datasetContent">
+          <div class="kpis">
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-database"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Rows</div>
+                <div class="kpi__value"><span id="kpiRows">—</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--live"><i class="fa-solid fa-file-excel"></i> yta.xlsx</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-eye"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Total Views</div>
+                <div class="kpi__value"><span id="kpiViews">—</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> dataset</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-thumbs-up"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Total Likes</div>
+                <div class="kpi__value"><span id="kpiLikes">—</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> dataset</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-comments"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Total Comments</div>
+                <div class="kpi__value"><span id="kpiComments">—</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--up"><i class="fa-solid fa-caret-up"></i> dataset</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-layer-group"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Top Category</div>
+                <div class="kpi__value"><span id="kpiTopCategory">—</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--live"><i class="fa-solid fa-star"></i> top</div>
+            </div>
+            <div class="kpi glass">
+              <div class="kpi__icon"><i class="fa-solid fa-user-astronaut"></i></div>
+              <div class="kpi__meta">
+                <div class="kpi__label">Top Channel</div>
+                <div class="kpi__value"><span id="kpiTopChannel">—</span></div>
+              </div>
+              <div class="kpi__trend kpi__trend--live"><i class="fa-solid fa-crown"></i> top</div>
+            </div>
+          </div>
+
+          <!-- Dataset Charts -->
+          <div class="section__head" style="margin-top: 26px">
+            <h2 class="section__title">Dataset Analytics</h2>
+            <p class="section__subtitle">Charts are rendered from your Excel data after login.</p>
+          </div>
+
+          <div class="charts">
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Top Trending Categories (Views)</h3>
+                <div style="display: flex; gap: 8px;">
+                  <button id="reloadDataBtn" class="chipBtn" aria-label="Reload dataset">
+                    <i class="fa-solid fa-rotate"></i><span>Reload</span>
+                  </button>
+                  <a href="/api/download-csv" class="chipBtn" download>
+                    <i class="fa-solid fa-download"></i><span>Download CSV</span>
+                  </a>
+                </div>
+              </div>
+              <canvas id="chartCategories" class="chart__canvas" width="640" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">views</span><span class="tag">category</span><span class="tag">rank</span>
+              </div>
+            </div>
+
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Most Viewed Channels</h3>
+                <span class="chart__hint"><i class="fa-solid fa-chart-column"></i> top creators</span>
+              </div>
+              <canvas id="chartChannels" class="chart__canvas" width="640" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">channels</span><span class="tag">views</span><span class="tag">growth</span>
+              </div>
+            </div>
+
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Daily View Growth</h3>
+                <span class="chart__hint"><i class="fa-solid fa-wave-square"></i> trending date</span>
+              </div>
+              <canvas id="chartGrowth" class="chart__canvas" width="640" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">time</span><span class="tag">views</span><span class="tag">trend</span>
+              </div>
+            </div>
+
+            <div class="chart glass">
+              <div class="chart__head">
+                <h3 class="chart__title">Likes vs Comments</h3>
+                <span class="chart__hint"><i class="fa-solid fa-bullseye"></i> scatter</span>
+              </div>
+              <canvas id="chartScatter" class="chart__canvas" width="454" height="454" style="width: 454px; height: 454px;"></canvas>
+              <div class="chart__foot">
+                <span class="tag">likes</span><span class="tag">comments</span><span class="tag">engagement</span>
+              </div>
+            </div>
+
+            <div class="chart glass chart--wide">
+              <div class="chart__head">
+                <h3 class="chart__title">Region-wise Trends (Views)</h3>
+                <span class="chart__hint"><i class="fa-solid fa-globe"></i> countries</span>
+              </div>
+              <canvas id="chartRegions" class="chart__canvas" width="1100" height="240"></canvas>
+              <div class="chart__foot">
+                <span class="tag">country</span><span class="tag">views</span><span class="tag">geo</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dataset Table -->
+          <div class="section__head" style="margin-top: 26px">
+            <h2 class="section__title">Dataset Preview</h2>
+            <p class="section__subtitle">Search and explore the first rows from `yta.xlsx`.</p>
+          </div>
+
+          <div class="tableCard glass">
+            <div class="tableCard__top">
+              <div class="search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input id="tableSearch" type="text" placeholder="Search title, channel, category, country..." />
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <select id="categoryFilter" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); padding: 6px 10px; border-radius: 8px;">
+                  <option value="">All Categories</option>
+                </select>
+                <select id="countryFilter" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); padding: 6px 10px; border-radius: 8px;">
+                  <option value="">All Countries</option>
+                </select>
+                <span class="badge badge--dark"><i class="fa-solid fa-filter"></i> Preview only</span>
+              </div>
+            </div>
+            <div class="tableWrap" id="dataTableWrap" aria-label="Dataset table"></div>
+          </div>
+
+          <div class="dash glass">
+            <div class="dash__top">
+              <div class="dash__left">
+                <div class="dash__title">
+                  <i class="fa-solid fa-shield"></i>
+                  <span>Secure Analytics Workspace</span>
+                </div>
+                <div class="dash__meta">
+                  <span class="badge badge--dark"><i class="fa-solid fa-user"></i> {{ user.name }}</span>
+                  <span class="badge badge--dark"><i class="fa-solid fa-envelope"></i> {{ user.email }}</span>
+                </div>
+              </div>
+              <div class="dash__actions">
+                <button id="dashRefresh" class="btn btn--tiny btn--gradient" type="button">
+                  <i class="fa-solid fa-rotate"></i><span>Refresh</span>
+                </button>
+                <a class="btn btn--tiny btn--ghost" href="/">
+                  <i class="fa-solid fa-arrow-left"></i><span>Back</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Use the same premium dashboard placeholders as the landing page (presentation-friendly) -->
+            <div class="dash__grid" style="margin-top: 14px">
+              <div class="dashCard glass2">
+                <div class="dashCard__head">
+                  <h3>Realtime KPI</h3>
+                  <span class="tiny"><span class="dot dot--green"></span> live</span>
+                </div>
+                <div class="dashCard__body">
+                  <div class="meter">
+                    <div class="meter__row">
+                      <span>Trend Heat</span>
+                      <strong id="heatVal">78</strong>
+                    </div>
+                    <div class="meter__bar"><span id="heatBar"></span></div>
+                  </div>
+                  <div class="meter">
+                    <div class="meter__row">
+                      <span>Creator Momentum</span>
+                      <strong id="momVal">64</strong>
+                    </div>
+                    <div class="meter__bar"><span id="momBar"></span></div>
+                  </div>
+                  <div class="meter">
+                    <div class="meter__row">
+                      <span>Audience Pull</span>
+                      <strong id="audVal">71</strong>
+                    </div>
+                    <div class="meter__bar"><span id="audBar"></span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dashCard glass2 dashCard--wide">
+                <div class="dashCard__head">
+                  <h3>Active Trending Feed</h3>
+                  <span class="tiny"><i class="fa-solid fa-wifi"></i> realtime</span>
+                </div>
+                <div class="dashCard__body">
+                  <div class="feed" id="trendingFeed" aria-label="Trending feed rows"></div>
+                </div>
+              </div>
+
+              <div class="dashCard glass2">
+                <div class="dashCard__head">
+                  <h3>AI Insight</h3>
+                  <span class="tiny"><i class="fa-solid fa-brain"></i> model</span>
+                </div>
+                <div class="dashCard__body">
+                  <div class="insight">
+                    <div class="insight__icon"><i class="fa-solid fa-lightbulb"></i></div>
+                    <div class="insight__text" id="aiInsightText">
+                      Shorts in <strong>Gaming</strong> show high velocity + strong retention. Prioritize creators with rising comment depth.
+                    </div>
+                  </div>
+                  <button class="btn btn--tiny btn--primary btn--glow" id="newInsight" type="button">
+                    <i class="fa-solid fa-sparkles"></i><span>Generate Insight</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="dashHint">
+              <i class="fa-solid fa-circle-info"></i>
+              <span>Above charts/table are real from <strong>`yta.xlsx`</strong>. The section below is UI-only simulation for extra presentation polish.</span>
+            </div>
+          </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Chart.js for real dataset charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>
+
